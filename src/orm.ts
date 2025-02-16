@@ -11,4 +11,5 @@ export const orm = new DataSource({
     database: process.env.POSTGRES_DB,
     entities: [join(__dirname, 'src/../**/**.entity{.ts,.js}')],
     synchronize: true,
+    logging: true,
 })
