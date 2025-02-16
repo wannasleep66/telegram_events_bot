@@ -4,15 +4,15 @@ import { IBotContext } from '../types/context.interface'
 import { COMMANDS } from '../constants'
 import { toFile } from 'qrcode'
 import { createInlineEventsListWithoutBack } from '../keyboards/admin_keyboard'
-import { EventService } from '../../event/event.service'
 import * as path from 'node:path'
+import { SubscriptionService } from '../../subscription/subscription.service'
 
 export class QrCodeHandler extends BotHandler {
-    private readonly eventService: EventService
+    private readonly subscriptionService: SubscriptionService
 
     constructor(bot: Telegraf<IBotContext>) {
         super(bot)
-        this.eventService = new EventService()
+        this.subscriptionService = new SubscriptionService()
     }
     initCommands(): void {
         this.bot.hears(COMMANDS.QR, this.getEventsToGenerateQr.bind(this))
@@ -24,15 +24,17 @@ export class QrCodeHandler extends BotHandler {
     }
 
     private async getEventsToGenerateQr(ctx: IBotContext): Promise<void> {
-        const [events, count] = await this.eventService.getAll()
-        if (!count) {
-            await ctx.reply('Пока что нет доступных мероприятий')
-            return
-        }
+        const userId = ctx.session.userId
+        const subscriptions = await this.subscriptionService.getByUser(userId)
+        const userEvents = subscriptions.map(
+            (subscription) => subscription.event
+        )
 
         await ctx.reply('Нажмите на мероприятие на котором хотите отметиться', {
-            reply_markup: createInlineEventsListWithoutBack(events, 'qrevent')
-                .reply_markup,
+            reply_markup: createInlineEventsListWithoutBack(
+                userEvents,
+                'qrevent'
+            ).reply_markup,
         })
     }
 

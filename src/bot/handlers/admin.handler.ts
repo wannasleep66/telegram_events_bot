@@ -99,13 +99,11 @@ export class AdminHandler extends BotHandler {
             (subscription) => subscription.user
         )
         const message =
-            subscribers?.length > 0
-                ? subscribers
+            subscriptions?.length > 0
+                ? subscriptions
                       .map(
-                          (user, index) =>
-                              `${index + 1}: ${user.username} ${user.surname} \t ${
-                                  user.group
-                              } \n\n`
+                          (subscription, index) =>
+                              `${index + 1}: ${subscription.user.username} ${subscription.user.surname} ${subscription.visited ? 'посетил' : 'не посетил'} ${subscription.user.group} \n\n`
                       )
                       .join('')
                 : 'Никто не записан на данное мероприятие'

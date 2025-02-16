@@ -38,6 +38,7 @@ export class UserHandler extends BotHandler {
         const deepLinkParams = ctx.startPayload
         if (deepLinkParams) {
             await this.markUserByDeepLink(deepLinkParams, ctx)
+            return
         }
 
         const userId = ctx.session.userId
