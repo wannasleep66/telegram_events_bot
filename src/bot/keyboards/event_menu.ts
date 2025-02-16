@@ -19,7 +19,7 @@ export const createEventsInlineMenu = (ctx: IBotContext) => {
             Markup.button.callback(
                 COMMANDS.prev,
                 CALLBACKS.prev,
-                ctx.session.currentPage <= 1
+                ctx.session.currentPage < 1
             ),
             Markup.button.callback(
                 COMMANDS.next,

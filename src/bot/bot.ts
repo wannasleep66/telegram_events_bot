@@ -42,7 +42,7 @@ export class Bot {
             new LocalSession({ database: 'session.json' }).middleware()
         )
         this.bot.use(stage.middleware())
-        // this.bot.use(logging)
+        this.bot.use(logging)
         this.bot.use(parseUserId)
         this.bot.use(checkPermission)
     }
