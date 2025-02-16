@@ -37,7 +37,7 @@ export class EventHandler extends BotHandler {
         if (!hasNextPage) {
             return
         }
-        console.log(ctx.session.currentPage, ctx.session.currentPage + 1)
+
         ctx.session.currentPage += 1
         await this.refreshListOfEvents(ctx)
     }
@@ -47,7 +47,7 @@ export class EventHandler extends BotHandler {
         if (!hasPreviousPage) {
             return
         }
-        console.log(ctx.session.currentPage, ctx.session.currentPage - 1)
+
         ctx.session.currentPage -= 1
         await this.refreshListOfEvents(ctx)
     }
@@ -66,6 +66,7 @@ export class EventHandler extends BotHandler {
     }
 
     private async getEvents(ctx: IBotContext): Promise<Event[]> {
+        console.log(ctx.session.currentPage)
         const [events, count] = await this.eventService.getAll(
             ctx.session.currentPage * 3,
             3
