@@ -113,6 +113,7 @@ export class SubscriptionHandler extends BotHandler {
         }
 
         await ctx.answerCbQuery('Вы успешно отписаны от мероприятия')
+        await this.getEventsToUnsubscribe(ctx)
     }
 
     private async getUserSubscriptions(ctx: IBotContext): Promise<void> {
