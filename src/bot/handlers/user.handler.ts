@@ -23,7 +23,7 @@ export class UserHandler extends BotHandler {
     public initCommands(): void {
         this.bot.start(this.start.bind(this))
         this.bot.hears(
-            'Вы успешно зарегистрированы',
+            'Вы были успешно зарегистрированы',
             this.authorizeUser.bind(this)
         )
         this.bot.hears(COMMANDS.cancel, this.backToMenu.bind(this))

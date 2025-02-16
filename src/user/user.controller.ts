@@ -29,6 +29,7 @@ export class UserController implements IController {
             res.status(201).json(newUser)
         } catch (error: unknown) {
             console.error(error)
+            res.status(500).json({ error: 'Произошла непредвиденная ошибка' })
         }
     }
 
