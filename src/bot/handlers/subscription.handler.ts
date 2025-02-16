@@ -6,6 +6,7 @@ import { EventService } from '../../event/event.service'
 import { CALLBACKS } from '../constants'
 import { createInlineEventsListWithBack } from '../keyboards/subscription_lists'
 import { buttonBack } from '../keyboards/event_menu'
+import { format } from 'date-fns'
 
 export class SubscriptionHandler extends BotHandler {
     private readonly subscriptionService: SubscriptionService
@@ -132,7 +133,8 @@ export class SubscriptionHandler extends BotHandler {
                 ? userEvents
                       .map(
                           (event, index) =>
-                              `${index + 1}: ${event.title}. \t ${event.date} \n\n`
+                              `🔹 **${index + 1}: ${event.title}**\n\n` +
+                              `⏰ *Время:* ${format(event.date, 'dd.MM.yyyy HH:mm')}\n\n`
                       )
                       .join('')
                 : 'Вы еще ни на что не записаны'
