@@ -40,6 +40,15 @@ export class UserHandler extends BotHandler {
             await this.markUserByDeepLink(deepLinkParams, ctx)
         }
 
+        const userId = ctx.session.userId
+        if (userId) {
+            const user = await this.userService.getById(userId)
+            if (user) {
+                ctx.session.isAuth = true
+                ctx.session.isAdmin = user.isAdmin
+            }
+        }
+
         if (!ctx.session.isAuth) {
             await ctx.reply(
                 'Для начала работы со мной вам нужно зарегистрироваться!',
@@ -63,7 +72,6 @@ export class UserHandler extends BotHandler {
     }
 
     private async authorizeUser(ctx: IBotContext): Promise<void> {
-        ctx.session.isAuth = true
         const userId = ctx.session.userId
         if (!userId) {
             await ctx.reply('Не удалось определить кто вы простите...')
@@ -73,12 +81,14 @@ export class UserHandler extends BotHandler {
         const user = await this.userService.getById(userId)
         if (!user) {
             await ctx.reply(
-                'Вы еще не были зарегистрированы, ссылка на регистрацию',
+                'Что то пошло не так и вы все еще не зарегистрированы, ссылка на регистрацию',
                 registrationInlineButton
             )
             return
         }
 
+        ctx.session.isAuth = true
+        ctx.session.isAdmin = user.isAdmin
         const keyboard = ctx.session.isAdmin
             ? createAdminMenu
             : createUserMenu(ctx)
@@ -109,7 +119,9 @@ export class UserHandler extends BotHandler {
                     event.id
                 )
             if (!subscription) {
-                await ctx.reply('Похоже пользователь не был записан')
+                await ctx.reply(
+                    'Похоже пользователь не был записан на это событие'
+                )
                 return
             }
 
