@@ -51,8 +51,12 @@ export class SubscriptionHandler extends BotHandler {
             )
         )
         if (!availableEvents.length) {
-            await ctx.answerCbQuery(
-                'Пока что нет доступных мероприяйтий для вас'
+            await ctx.editMessageText(
+                'Пока что нет доступных мероприятий для вас',
+                {
+                    reply_markup:
+                        Markup.inlineKeyboard(buttonBack).reply_markup,
+                }
             )
             return
         }
@@ -65,13 +69,15 @@ export class SubscriptionHandler extends BotHandler {
     private async getEventsToUnsubscribe(ctx: IBotContext): Promise<void> {
         const userId = ctx.session.userId
         const subscriptions = await this.subscriptionService.getByUser(userId)
-        if (!subscriptions.length) {
-            await ctx.answerCbQuery('Вы еще ни на что не записаны')
-            return
-        }
         const userEvents = subscriptions.map(
             (subscription) => subscription.event
         )
+        if (!userEvents.length) {
+            await ctx.editMessageText('Похоже вы еще ни на что не записаны', {
+                reply_markup: Markup.inlineKeyboard(buttonBack).reply_markup,
+            })
+            return
+        }
         await ctx.editMessageText('Нажмите на мероприятие, чтобы отписаться', {
             reply_markup: createInlineEventsListWithBack(userEvents, 'unsub')
                 .reply_markup,
