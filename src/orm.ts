@@ -5,8 +5,7 @@ dotenv.config()
 
 export const orm = new DataSource({
     type: 'postgres',
-    host: process.env.POSTGRES_HOST,
-    port: Number(process.env.POSTGRES_PORT),
+    url: process.env.POSTGRES_URL,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
