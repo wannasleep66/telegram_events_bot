@@ -25,6 +25,11 @@ export class QrCodeHandler extends BotHandler {
 
     private async getEventsToGenerateQr(ctx: IBotContext): Promise<void> {
         const [events, count] = await this.eventService.getAll()
+        if (!count) {
+            await ctx.reply('Пока что нет доступных мероприятий')
+            return
+        }
+
         await ctx.reply('Нажмите на мероприятие на котором хотите отметиться', {
             reply_markup: createInlineEventsListWithoutBack(events, 'qrevent')
                 .reply_markup,

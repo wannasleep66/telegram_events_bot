@@ -10,6 +10,7 @@ import { EventHandler } from './handlers/event.handler'
 import { SubscriptionHandler } from './handlers/subscription.handler'
 import { AdminHandler } from './handlers/admin.handler'
 import { QrCodeHandler } from './handlers/qrcode.handler'
+import { checkPermission } from './middlewares/checkPermission'
 
 export class Bot {
     private readonly bot: Telegraf<IBotContext>
@@ -43,5 +44,6 @@ export class Bot {
         this.bot.use(stage.middleware())
         // this.bot.use(logging)
         this.bot.use(parseUserId)
+        this.bot.use(checkPermission)
     }
 }

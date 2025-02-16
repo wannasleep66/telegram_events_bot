@@ -17,3 +17,10 @@ export const createUserMenu = (ctx: IBotContext) => {
         ],
     ]).resize()
 }
+
+export const registrationInlineButton = Markup.inlineKeyboard([
+    Markup.button.webApp(
+        'Регистрация',
+        'https://superb-sprite-8ab024.netlify.app/'
+    ),
+])

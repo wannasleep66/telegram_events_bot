@@ -1,11 +1,14 @@
 import { BotHandler } from './base.handler'
-import { Markup, Telegraf } from 'telegraf'
+import { Telegraf } from 'telegraf'
 import { IBotContext } from '../types/context.interface'
 import { SubscriptionService } from '../../subscription/subscription.service'
 import { EventService } from '../../event/event.service'
 import { UserService } from '../../user/user.service'
 import { createAdminMenu, createDevMenu } from '../keyboards/admin_keyboard'
-import { createUserMenu } from '../keyboards/user_keyboard'
+import {
+    createUserMenu,
+    registrationInlineButton,
+} from '../keyboards/user_keyboard'
 import { COMMANDS } from '../constants'
 
 export class UserHandler extends BotHandler {
@@ -40,12 +43,7 @@ export class UserHandler extends BotHandler {
         if (!ctx.session.isAuth) {
             await ctx.reply(
                 'Для начала работы со мной вам нужно зарегистрироваться!',
-                Markup.inlineKeyboard([
-                    Markup.button.webApp(
-                        'Регистрация',
-                        'https://superb-sprite-8ab024.netlify.app/'
-                    ),
-                ])
+                registrationInlineButton
             )
             return
         }
@@ -75,7 +73,8 @@ export class UserHandler extends BotHandler {
         const user = await this.userService.getById(userId)
         if (!user) {
             await ctx.reply(
-                'Вы еще не были зарегистрированы, ссылка на регистрацию'
+                'Вы еще не были зарегистрированы, ссылка на регистрацию',
+                registrationInlineButton
             )
             return
         }
