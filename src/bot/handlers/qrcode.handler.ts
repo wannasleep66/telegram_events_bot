@@ -42,7 +42,14 @@ export class QrCodeHandler extends BotHandler {
         await this.generateQrCode(eventId, ctx.session.userId)
         await ctx.replyWithPhoto(
             Input.fromLocalFile(
-                path.resolve(__dirname, '..', '..', 'public', 'qrcode.png')
+                path.resolve(
+                    __dirname,
+                    '..',
+                    '..',
+                    '..',
+                    'public',
+                    'qrcode.png'
+                )
             )
         )
     }
@@ -56,7 +63,7 @@ export class QrCodeHandler extends BotHandler {
         }`
         try {
             await toFile(
-                path.join(__dirname, '..', '..', 'public', 'qrcode.png'),
+                path.join(__dirname, '..', '..', '..', 'public', 'qrcode.png'),
                 params
             )
         } catch (error) {
