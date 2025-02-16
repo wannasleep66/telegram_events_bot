@@ -68,7 +68,7 @@ export class EventHandler extends BotHandler {
     private async getEvents(ctx: IBotContext): Promise<Event[]> {
         console.log(ctx.session.currentPage)
         const [events, count] = await this.eventService.getAll(
-            ctx.session.currentPage * 3,
+            ctx.session.currentPage * 3 - 1,
             3
         )
         ctx.session.countOfPages = Math.ceil(count / 3)
