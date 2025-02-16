@@ -182,7 +182,7 @@ export class AdminHandler extends BotHandler {
 
     private async getEvents(ctx: IBotContext): Promise<Event[]> {
         const [events, count] = await this.eventService.getAll(
-            ctx.session.currentPage * 3 - 1,
+            ctx.session.currentPage * 3,
             3
         )
         ctx.session.countOfPages = Math.ceil(count / 3)
