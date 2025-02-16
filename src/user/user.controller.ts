@@ -16,7 +16,9 @@ export class UserController implements IController {
     }
 
     private initRoutes(): void {
-        this.router.post('/user', this.create.bind(this))
+        this.router.post(this.path, this.create.bind(this))
+        this.router.get(this.path, this.getAll.bind(this))
+        this.router.get(this.path + '/:userId', this.getOne.bind(this))
     }
 
     private async create(req: Request, res: Response): Promise<void> {
