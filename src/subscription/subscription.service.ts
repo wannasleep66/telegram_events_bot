@@ -38,8 +38,8 @@ export class SubscriptionService {
     ): Promise<Subscription | null> {
         const subscription = await this.subscriptionRepository
             .createQueryBuilder('subscription')
-            .where('subscription.eventId = :id', { id: eventId })
-            .andWhere('subscription.userId = :id', { id: userId })
+            .where('subscription.eventId = :eventId', { eventId: eventId })
+            .andWhere('subscription.userId = :userId', { userId: userId })
             .getOne()
 
         return subscription
