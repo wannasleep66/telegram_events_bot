@@ -62,7 +62,7 @@ export const createAdminEventsInlineMenu = (ctx: IBotContext) => {
             Markup.button.callback(
                 COMMANDS.prev,
                 CALLBACKS.prevAdmin,
-                ctx.session.currentPage <= 1
+                ctx.session.currentPage < 1
             ),
             Markup.button.callback(
                 COMMANDS.next,

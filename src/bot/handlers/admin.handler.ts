@@ -147,7 +147,7 @@ export class AdminHandler extends BotHandler {
     private async getListOfEvents(ctx: IBotContext): Promise<void> {
         ctx.session.currentPage = 0
         const events = await this.getEvents(ctx)
-        const message = this.formatToMessage(events)
+        const message = this.formatToMessage(events, ctx.session.currentPage)
         await ctx.reply(message, {
             reply_markup: createAdminEventsInlineMenu(ctx).reply_markup,
         })
@@ -174,7 +174,10 @@ export class AdminHandler extends BotHandler {
 
     private async refreshListOfEvents(ctx: IBotContext): Promise<void> {
         const refreshedEvents = await this.getEvents(ctx)
-        const refreshedMessage = this.formatToMessage(refreshedEvents)
+        const refreshedMessage = this.formatToMessage(
+            refreshedEvents,
+            ctx.session.currentPage
+        )
         await ctx.editMessageText(refreshedMessage, {
             reply_markup: createAdminEventsInlineMenu(ctx).reply_markup,
         })
@@ -189,14 +192,14 @@ export class AdminHandler extends BotHandler {
         return events
     }
 
-    private formatToMessage(events: Event[]): string {
+    private formatToMessage(events: Event[], currentPage: number): string {
         if (!events.length) {
             return '🚫 Ничего не найдено'
         }
         const message = events
             .map(
                 (event, index) =>
-                    `🔹 **${index + 1}: ${event.title}**\n\n` +
+                    `🔹 **${index + 1 + currentPage * 3}: ${event.title}**\n\n` +
                     `📝 *Описание:* ${event.description}\n\n` +
                     `⏰ *Время:* ${format(event.date, 'dd.MM.yyyy HH:mm')}\n\n` +
                     `-----------------------------------------\n\n`
