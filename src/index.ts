@@ -10,7 +10,7 @@ dotenv.config()
 
 const main = async () => {
     await orm.initialize()
-    const app = new App(8080, [
+    const app = new App(5000, [
         new UserController(
             new UserService(),
             new TelegramService(process.env.TELEGRAM_TOKEN as string)
