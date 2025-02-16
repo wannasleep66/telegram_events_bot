@@ -155,7 +155,7 @@ export class AdminHandler extends BotHandler {
 
     private async getNextEventsPage(ctx: IBotContext): Promise<void> {
         const hasNextPage =
-            ctx.session.currentPage + 1 === ctx.session.countOfPages
+            ctx.session.currentPage + 1 < ctx.session.countOfPages
         if (!hasNextPage) {
             return
         }
@@ -164,7 +164,7 @@ export class AdminHandler extends BotHandler {
     }
 
     private async getPreviousEventsPage(ctx: IBotContext): Promise<void> {
-        const hasPreviousPage = ctx.session.currentPage === 0
+        const hasPreviousPage = ctx.session.currentPage > 0
         if (!hasPreviousPage) {
             return
         }

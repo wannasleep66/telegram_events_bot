@@ -37,6 +37,7 @@ export class EventHandler extends BotHandler {
         if (!hasNextPage) {
             return
         }
+        console.log(ctx.session.currentPage, ctx.session.currentPage + 1)
         ctx.session.currentPage += 1
         await this.refreshListOfEvents(ctx)
     }
@@ -46,6 +47,7 @@ export class EventHandler extends BotHandler {
         if (!hasPreviousPage) {
             return
         }
+        console.log(ctx.session.currentPage, ctx.session.currentPage - 1)
         ctx.session.currentPage -= 1
         await this.refreshListOfEvents(ctx)
     }
