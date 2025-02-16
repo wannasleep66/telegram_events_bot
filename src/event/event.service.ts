@@ -27,8 +27,8 @@ export class EventService {
             .leftJoinAndSelect('subscription.user', 'user')
             .orderBy('event.date')
 
-        skip && query.skip(skip)
         limit && query.limit(limit)
+        skip && query.skip(skip)
 
         const events = await query.getManyAndCount()
         return events
