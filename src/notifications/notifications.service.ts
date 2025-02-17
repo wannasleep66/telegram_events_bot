@@ -32,7 +32,7 @@ export class BotNotificationsController {
         try {
             for (const subscription of notifications) {
                 await this.telegramService.sendMessage(
-                    subscription.user.telegram,
+                    subscription.user.id,
                     `Не забудьте посетить ${subscription.event.title} в ${subscription.event.date} 😊`
                 )
             }

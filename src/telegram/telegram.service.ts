@@ -19,7 +19,7 @@ export class TelegramService {
         })
     }
 
-    public async sendMessage(username: string, message: string): Promise<void> {
-        await this.bot.telegram.sendMessage(username, message)
+    public async sendMessage(userId: string, message: string): Promise<void> {
+        await this.bot.telegram.sendMessage(userId, message)
     }
 }
