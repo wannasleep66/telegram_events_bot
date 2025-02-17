@@ -127,16 +127,14 @@ export class SubscriptionHandler extends BotHandler {
     private async getUserSubscriptions(ctx: IBotContext): Promise<void> {
         const userId = ctx.session.userId
         const subscriptions = await this.subscriptionService.getByUser(userId)
-        const userEvents = subscriptions.map(
-            (subscription) => subscription.event
-        )
         const message =
-            userEvents?.length > 0
-                ? userEvents
+            subscriptions?.length > 0
+                ? subscriptions
                       .map(
-                          (event, index) =>
-                              `🔹 **${index + 1}: ${event.title}**\n\n` +
-                              `⏰ *Время:* ${format(event.date, 'dd.MM.yyyy HH:mm')}\n\n`
+                          (subscription, index) =>
+                              `🔹 ${index + 1}: ${subscription.event.title}\n\n` +
+                              `⏰ Время: ${format(subscription.event.date, 'dd.MM.yyyy HH:mm')}\n\n` +
+                              `${subscription.visited ? 'Посетил' : 'Не посетил'}`
                       )
                       .join('')
                 : 'Тут пусто...'

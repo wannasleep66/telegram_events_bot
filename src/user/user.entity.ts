@@ -7,6 +7,9 @@ export class User {
     public id: string
 
     @Column()
+    public telegram: string
+
+    @Column()
     public username: string
 
     @Column()

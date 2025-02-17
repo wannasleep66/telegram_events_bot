@@ -6,6 +6,8 @@ import { UserService } from './user/user.service'
 import { TelegramService } from './telegram/telegram.service'
 import { UserController } from './user/user.controller'
 import dotenv from 'dotenv'
+import { BotNotificationsController } from './notifications/notifications.service'
+import { SubscriptionService } from './subscription/subscription.service'
 dotenv.config()
 
 const main = async () => {
@@ -16,8 +18,13 @@ const main = async () => {
             new TelegramService(process.env.TELEGRAM_TOKEN as string)
         ),
     ])
+    const notifications = new BotNotificationsController(
+        new SubscriptionService(),
+        new TelegramService(process.env.TELEGRAM_TOKEN as string)
+    )
     const bot = new Bot(process.env.TELEGRAM_TOKEN as string)
     app.listen()
+    notifications.init()
     await bot.launch()
 }
 
