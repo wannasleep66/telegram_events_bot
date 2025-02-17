@@ -1,6 +1,7 @@
 import { SubscriptionService } from '../subscription/subscription.service'
 import { TelegramService } from '../telegram/telegram.service'
 import cron from 'node-cron'
+import { format } from 'date-fns'
 
 export class BotNotificationsController {
     private readonly subscriptionService: SubscriptionService
@@ -33,8 +34,11 @@ export class BotNotificationsController {
             for (const subscription of notifications) {
                 await this.telegramService.sendMessage(
                     subscription.user.id,
-                    `Не забудьте посетить ${subscription.event.title} в ${subscription.event.date} 😊`
+                    `Не забудьте посетить ${subscription.event.title} в ${format(subscription.event.date, 'dd.MM.yyyy HH:mm')} 😊`
                 )
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 500)
+                })
             }
         } catch (error: unknown) {
             console.error(error)
