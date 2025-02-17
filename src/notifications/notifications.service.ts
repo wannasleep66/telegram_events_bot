@@ -15,7 +15,7 @@ export class BotNotificationsController {
     }
 
     public init() {
-        cron.schedule('0 9,14,18 * * *', async () => {
+        cron.schedule('* * * * *', async () => {
             await this.notify()
         })
     }
