@@ -4,13 +4,12 @@ import { IBotContext } from '../types/context.interface'
 import { SubscriptionService } from '../../subscription/subscription.service'
 import { EventService } from '../../event/event.service'
 import { UserService } from '../../user/user.service'
-import { createAdminMenu, createDevMenu } from '../keyboards/admin_keyboard'
+import { createAdminMenu } from '../keyboards/admin_keyboard'
 import {
     createUserMenu,
     registrationInlineButton,
 } from '../keyboards/user_keyboard'
 import { COMMANDS } from '../constants'
-import { isAdmin } from '../middlewares/isAdminGuard'
 
 export class UserHandler extends BotHandler {
     private readonly userService: UserService

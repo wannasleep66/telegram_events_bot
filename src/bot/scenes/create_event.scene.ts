@@ -4,11 +4,10 @@ import { IBotContext } from '../types/context.interface'
 import {
     cancelCreateButton,
     createAdminMenu,
-    createDevMenu,
 } from '../keyboards/admin_keyboard'
 import { parseEventDate } from '../utils/date-formater'
 import { EventService } from '../../event/event.service'
-import { keyboard } from 'telegraf/markup'
+import { createUserMenu } from '../keyboards/user_keyboard'
 
 export const createEventScene = new Scenes.WizardScene<IBotContext>(
     COMMANDS.create,
@@ -85,7 +84,7 @@ export const createEventScene = new Scenes.WizardScene<IBotContext>(
             }
             const keyboard = ctx.session.isAdmin
                 ? createAdminMenu
-                : createDevMenu
+                : createUserMenu(ctx)
 
             await ctx.reply('Мероприятие успешно создано!', {
                 reply_markup: keyboard.reply_markup,
@@ -93,7 +92,7 @@ export const createEventScene = new Scenes.WizardScene<IBotContext>(
         } catch (error) {
             const keyboard = ctx.session.isAdmin
                 ? createAdminMenu
-                : createDevMenu
+                : createUserMenu(ctx)
 
             await ctx.reply(
                 'Произошла ошибка при создании, попробуйте еще раз',

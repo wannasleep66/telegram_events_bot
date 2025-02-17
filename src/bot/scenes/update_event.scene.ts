@@ -4,10 +4,10 @@ import { COMMANDS } from '../constants'
 import {
     cancelAndSkipUpdateButton,
     createAdminMenu,
-    createDevMenu,
 } from '../keyboards/admin_keyboard'
 import { parseEventDate } from '../utils/date-formater'
 import { EventService } from '../../event/event.service'
+import { createUserMenu } from '../keyboards/user_keyboard'
 
 export const updateEventScene = new Scenes.WizardScene<IBotContext>(
     COMMANDS.update,
@@ -64,8 +64,6 @@ export const updateEventScene = new Scenes.WizardScene<IBotContext>(
             return next()
         }
 
-        const eventService = new EventService()
-
         if (message === COMMANDS.skip) {
             await updateEvent(
                 ctx.session.eventToUpdateId,
@@ -101,7 +99,7 @@ async function updateEvent(
     ctx: IBotContext
 ) {
     const eventService = new EventService()
-    const keyboard = ctx.session.isAdmin ? createAdminMenu : createDevMenu
+    const keyboard = ctx.session.isAdmin ? createAdminMenu : createUserMenu(ctx)
     try {
         const eventToUpdate = await eventService.getById(eventId)
         if (!eventToUpdate) {
