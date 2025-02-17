@@ -309,10 +309,10 @@ export class AdminHandler extends BotHandler {
 
     private async getUsers(ctx: IBotContext): Promise<User[]> {
         const [users, count] = await this.userService.getAll(
-            ctx.session.currentPage * 2,
-            2
+            ctx.session.currentPage * 10,
+            10
         )
-        ctx.session.countOfPages = Math.ceil(count / 2)
+        ctx.session.countOfPages = Math.ceil(count / 10)
         return users
     }
 
