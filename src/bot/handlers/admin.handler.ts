@@ -222,7 +222,7 @@ export class AdminHandler extends BotHandler {
                 (event, index) =>
                     `<b>➤ ${index + 1 + currentPage * 3}: ${event.title}</b>\n\n<b>Описание:</b> ${event.description}\n\n<b>Время:</b> ${format(event.date, 'dd.MM.yyyy HH:mm')}`
             )
-            .join('\n')
+            .join('\n\n')
         return message
     }
 }
