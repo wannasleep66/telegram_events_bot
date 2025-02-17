@@ -70,9 +70,9 @@ export class SubscriptionHandler extends BotHandler {
     private async getEventsToUnsubscribe(ctx: IBotContext): Promise<void> {
         const userId = ctx.session.userId
         const subscriptions = await this.subscriptionService.getByUser(userId)
-        const userEvents = subscriptions.map(
-            (subscription) => subscription.event
-        )
+        const userEvents = subscriptions
+            .filter((subscription) => !subscription.visited)
+            .map((subscription) => subscription.event)
         if (!userEvents.length) {
             await ctx.editMessageText('Похоже вы еще ни на что не записаны', {
                 reply_markup: Markup.inlineKeyboard(buttonBack).reply_markup,

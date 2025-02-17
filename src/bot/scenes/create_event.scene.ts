@@ -47,7 +47,7 @@ export const createEventScene = new Scenes.WizardScene<IBotContext>(
         }
 
         ctx.scene.session.description = message
-        await ctx.reply('Добавь те дату задачи в формате дд-мм-гггг чч:мм')
+        await ctx.reply('Добавьте дату задачи в формате дд.мм.гггг чч:мм')
         ctx.wizard.next()
     },
     async (ctx, next: () => void) => {
