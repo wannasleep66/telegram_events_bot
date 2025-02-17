@@ -2,6 +2,7 @@ import { CALLBACKS, COMMANDS } from '../constants'
 import { Markup } from 'telegraf'
 import { IBotContext } from '../types/context.interface'
 import { Event } from '../../event/event.entity'
+import { User } from '../../user/user.entity'
 
 // @ts-ignore
 export const createAdminMenu = Markup.keyboard([
@@ -16,25 +17,8 @@ export const createAdminMenu = Markup.keyboard([
             text: COMMANDS.adminEventsList,
             callback_data: COMMANDS.adminEventsList,
         },
+        { text: COMMANDS.makeAdmin, callback_data: CALLBACKS.makeAdmin },
     ],
-]).resize()
-
-// @ts-ignore
-export const createDevMenu = Markup.keyboard([
-    [
-        { text: COMMANDS.create, callback_data: CALLBACKS.create },
-        { text: COMMANDS.update, callback_data: CALLBACKS.update },
-        { text: COMMANDS.delete, callback_data: CALLBACKS.delete },
-    ],
-    [
-        { text: COMMANDS.subscribers, callback_data: CALLBACKS.subscribers },
-        {
-            text: COMMANDS.adminEventsList,
-            callback_data: COMMANDS.adminEventsList,
-        },
-    ],
-    [{ text: COMMANDS.QR, callback_data: CALLBACKS.QR }],
-    [{ text: COMMANDS.list, callback_data: CALLBACKS.list }],
 ]).resize()
 
 export const cancelCreateButton = Markup.keyboard([
@@ -67,6 +51,34 @@ export const createAdminEventsInlineMenu = (ctx: IBotContext) => {
             Markup.button.callback(
                 COMMANDS.next,
                 CALLBACKS.nextAdmin,
+                ctx.session.countOfPages - 1 === ctx.session.currentPage
+            ),
+        ],
+    ])
+}
+
+export const createInlineUsersList = (
+    users: User[],
+    cb: string,
+    ctx: IBotContext
+) => {
+    const eventList = users.map((user) => [
+        {
+            text: `${user.username} ${user.surname} ${user.group}`,
+            callback_data: `${cb}_${user.id}`,
+        },
+    ])
+    return Markup.inlineKeyboard([
+        ...eventList,
+        [
+            Markup.button.callback(
+                COMMANDS.prev,
+                CALLBACKS.prevUser,
+                ctx.session.currentPage < 1
+            ),
+            Markup.button.callback(
+                COMMANDS.next,
+                CALLBACKS.nextUser,
                 ctx.session.countOfPages - 1 === ctx.session.currentPage
             ),
         ],

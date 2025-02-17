@@ -2,6 +2,7 @@ import { Repository } from 'typeorm'
 import { User } from './user.entity'
 import { orm } from '../orm'
 import { CreateUserDto } from './dto/CreateUser.dto'
+import { UpdateUserDto } from './dto/UpdateUser.dto'
 
 export class UserService {
     private readonly userRepository: Repository<User>
@@ -16,11 +17,20 @@ export class UserService {
         return user
     }
 
-    public async getAll(): Promise<User[]> {
-        const users = await this.userRepository
+    public async getAll(
+        skip?: number,
+        limit?: number
+    ): Promise<[users: User[], count: number]> {
+        const query = this.userRepository
             .createQueryBuilder('user')
-            .getMany()
+            .leftJoinAndSelect('user.subscriptions', 'subscription')
+            .leftJoinAndSelect('subscription.event', 'event')
+            .orderBy('user.username', 'DESC')
 
+        limit && query.take(limit)
+        skip && query.skip(skip)
+
+        const users = await query.getManyAndCount()
         return users
     }
 
@@ -31,5 +41,18 @@ export class UserService {
             .getOne()
 
         return user
+    }
+
+    public async update(
+        prevUser: User,
+        updateData: UpdateUserDto
+    ): Promise<User> {
+        prevUser.username = updateData.username || prevUser.username
+        prevUser.surname = updateData.surname || prevUser.surname
+        prevUser.group = updateData.group || prevUser.group
+        prevUser.isAdmin = updateData.isAdmin || prevUser.isAdmin
+
+        const updatedUser = await this.userRepository.save(prevUser)
+        return updatedUser
     }
 }

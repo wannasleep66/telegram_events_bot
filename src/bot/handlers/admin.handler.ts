@@ -6,16 +6,19 @@ import { EventService } from '../../event/event.service'
 import {
     createAdminEventsInlineMenu,
     createInlineEventsListWithoutBack,
+    createInlineUsersList,
 } from '../keyboards/admin_keyboard'
 import { SubscriptionService } from '../../subscription/subscription.service'
-import { createEventsInlineMenu } from '../keyboards/event_menu'
 import { Event } from '../../event/event.entity'
 import { format } from 'date-fns'
 import { isAdmin } from '../middlewares/isAdminGuard'
+import { UserService } from '../../user/user.service'
+import { User } from '../../user/user.entity'
 
 export class AdminHandler extends BotHandler {
     private readonly eventService: EventService
     private readonly subscriptionService: SubscriptionService
+    private readonly userService: UserService
 
     constructor(bot: Telegraf<IBotContext>) {
         super(bot)
@@ -45,6 +48,11 @@ export class AdminHandler extends BotHandler {
             isAdmin,
             this.getEventsToGetSubscribers.bind(this)
         )
+        this.bot.hears(
+            COMMANDS.makeAdmin,
+            isAdmin,
+            this.getUsersToMakeAdmin.bind(this)
+        )
         this.bot.action(
             // @ts-ignore
             (cbData) => cbData.startsWith('show'),
@@ -64,6 +72,12 @@ export class AdminHandler extends BotHandler {
             this.deleteEvent.bind(this)
         )
         this.bot.action(
+            // @ts-ignore
+            (cbData) => cbData.startsWith('toAdmin'),
+            isAdmin,
+            this.makeAdmin.bind(this)
+        )
+        this.bot.action(
             CALLBACKS.nextAdmin,
             isAdmin,
             this.getNextEventsPage.bind(this)
@@ -72,6 +86,16 @@ export class AdminHandler extends BotHandler {
             CALLBACKS.prevAdmin,
             isAdmin,
             this.getPreviousEventsPage.bind(this)
+        )
+        this.bot.action(
+            CALLBACKS.nextUser,
+            isAdmin,
+            this.getNextUsersPage.bind(this)
+        )
+        this.bot.action(
+            CALLBACKS.prevUser,
+            isAdmin,
+            this.getPreviousUsersPage.bind(this)
         )
     }
 
@@ -106,6 +130,18 @@ export class AdminHandler extends BotHandler {
         })
     }
 
+    private async getUsersToMakeAdmin(ctx: IBotContext): Promise<void> {
+        ctx.session.currentPage = 0
+        const users = await this.getUsers(ctx)
+        await ctx.reply(
+            'Нажмите на пользователя, которого хотите сделать админом',
+            {
+                reply_markup: createInlineUsersList(users, 'toAdmin', ctx)
+                    .reply_markup,
+            }
+        )
+    }
+
     private async getSubscribers(ctx: IBotContext): Promise<void> {
         // @ts-ignore
         const eventId = ctx.update.callback_query.data.split('_')[1]
@@ -114,9 +150,6 @@ export class AdminHandler extends BotHandler {
             return
         }
         const subscriptions = await this.subscriptionService.getByEvent(eventId)
-        const subscribers = subscriptions.map(
-            (subscription) => subscription.user
-        )
         const message =
             subscriptions?.length > 0
                 ? subscriptions
@@ -163,6 +196,33 @@ export class AdminHandler extends BotHandler {
         await ctx.reply('Мероприятие было успешно удалено')
     }
 
+    private async makeAdmin(ctx: IBotContext): Promise<void> {
+        // @ts-ignore
+        const userId = ctx.update.callback_query.data.split('_')[1]
+        if (!userId) {
+            await ctx.answerCbQuery('Что то пошло не так...')
+            return
+        }
+
+        const userToUpdate = await this.userService.getById(userId)
+        if (!userToUpdate) {
+            await ctx.answerCbQuery(
+                'Кажется такого пользователь не существует...'
+            )
+            return
+        }
+
+        const updatedUser = await this.userService.update(userToUpdate, {
+            ...userToUpdate,
+            isAdmin: true,
+        })
+        if (!updatedUser) {
+            await ctx.answerCbQuery('Не удалось дать пользователю роль...')
+        }
+
+        await ctx.reply('Пользователь теперь админ')
+    }
+
     private async getListOfEvents(ctx: IBotContext): Promise<void> {
         ctx.session.currentPage = 0
         const events = await this.getEvents(ctx)
@@ -204,6 +264,39 @@ export class AdminHandler extends BotHandler {
         })
     }
 
+    private async getNextUsersPage(ctx: IBotContext): Promise<void> {
+        const hasNextPage =
+            ctx.session.currentPage + 1 < ctx.session.countOfPages
+        if (!hasNextPage) {
+            return
+        }
+        ctx.session.currentPage += 1
+        await this.refreshListOfUsers(ctx)
+    }
+
+    private async getPreviousUsersPage(ctx: IBotContext): Promise<void> {
+        const hasPreviousPage = ctx.session.currentPage > 0
+        if (!hasPreviousPage) {
+            return
+        }
+        ctx.session.currentPage -= 1
+        await this.refreshListOfUsers(ctx)
+    }
+
+    private async refreshListOfUsers(ctx: IBotContext): Promise<void> {
+        const refreshedUsers = await this.getUsers(ctx)
+        await ctx.editMessageText(
+            'Нажмите на пользователя, которого хотите сделать админом',
+            {
+                reply_markup: createInlineUsersList(
+                    refreshedUsers,
+                    'toAdmin',
+                    ctx
+                ).reply_markup,
+            }
+        )
+    }
+
     private async getEvents(ctx: IBotContext): Promise<Event[]> {
         const [events, count] = await this.eventService.getAll(
             ctx.session.currentPage * 3,
@@ -211,6 +304,15 @@ export class AdminHandler extends BotHandler {
         )
         ctx.session.countOfPages = Math.ceil(count / 3)
         return events
+    }
+
+    private async getUsers(ctx: IBotContext): Promise<User[]> {
+        const [users, count] = await this.userService.getAll(
+            ctx.session.currentPage * 3,
+            3
+        )
+        ctx.session.countOfPages = Math.ceil(count / 3)
+        return users
     }
 
     private formatToMessage(events: Event[], currentPage: number): string {

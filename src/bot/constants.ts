@@ -17,6 +17,7 @@ export const COMMANDS = {
     subscribers: '👥Записи на мероприятия',
     toEventsList: '📅 Все мероприятия',
     QR: '🔳 Создать QR код',
+    makeAdmin: 'Сделать админом 🧐',
 }
 
 export const CALLBACKS = {
@@ -25,6 +26,8 @@ export const CALLBACKS = {
     list: 'show_events',
     nextAdmin: 'admin_next',
     prevAdmin: 'prev_admin',
+    nextUser: 'next_user',
+    prevUser: 'prev_user',
     create: 'create_event',
     update: 'update',
     delete: 'delete_event',
@@ -34,5 +37,6 @@ export const CALLBACKS = {
     toEvents: 'back_to_events',
     toUserEvents: 'user_events',
     adminEventsList: 'list_of_created',
+    makeAdmin: 'make_admin',
     QR: 'qr_events',
 }
