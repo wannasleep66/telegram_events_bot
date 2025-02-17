@@ -28,7 +28,7 @@ export class EventHandler extends BotHandler {
         const message = this.formatToMessage(events, ctx.session.currentPage)
         await ctx.reply(message, {
             reply_markup: createEventsInlineMenu(ctx).reply_markup,
-            parse_mode: 'MarkdownV2',
+            parse_mode: 'HTML',
         })
     }
 
@@ -66,7 +66,7 @@ export class EventHandler extends BotHandler {
         )
         await ctx.editMessageText(refreshedMessage, {
             reply_markup: createEventsInlineMenu(ctx).reply_markup,
-            parse_mode: 'MarkdownV2',
+            parse_mode: 'HTML',
         })
     }
 
@@ -86,9 +86,10 @@ export class EventHandler extends BotHandler {
         const message = events
             .map(
                 (event, index) =>
-                    `➤ **${index + 1 + currentPage * 3}: ${event.title}**\n\n +
-        *Описание:* ${event.description}\n\n +
-        *Время:* ${format(event.date, 'dd.MM.yyyy HH:mm')}\n\n`
+                    `<b>➤ ${index + 1 + currentPage * 3}: ${event.title}</b>\n +
+        <i>Описание:</i> ${event.description}\n +
+        <i>Время:</i> ${format(event.date, 'dd.MM.yyyy HH:mm')}
+    `
             )
             .join('\n')
 
