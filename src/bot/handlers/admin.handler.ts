@@ -24,6 +24,7 @@ export class AdminHandler extends BotHandler {
         super(bot)
         this.eventService = new EventService()
         this.subscriptionService = new SubscriptionService()
+        this.userService = new UserService()
     }
 
     public initCommands(): void {
