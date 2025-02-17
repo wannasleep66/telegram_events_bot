@@ -220,8 +220,8 @@ export class AdminHandler extends BotHandler {
         const message = events
             .map(
                 (event, index) =>
-                    `<b>➤ ${index + 1 + currentPage * 3}: ${event.title}</b>\n +
-        <i>Описание:</i> ${event.description}\n +
+                    `<b>➤ ${index + 1 + currentPage * 3}: ${event.title}</b>
+        <i>Описание:</i> ${event.description}
         <i>Время:</i> ${format(event.date, 'dd.MM.yyyy HH:mm')}
     `
             )
