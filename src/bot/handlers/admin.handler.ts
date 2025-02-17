@@ -11,6 +11,7 @@ import { SubscriptionService } from '../../subscription/subscription.service'
 import { createEventsInlineMenu } from '../keyboards/event_menu'
 import { Event } from '../../event/event.entity'
 import { format } from 'date-fns'
+import { isAdmin } from '../middlewares/isAdminGuard'
 
 export class AdminHandler extends BotHandler {
     private readonly eventService: EventService
@@ -25,33 +26,51 @@ export class AdminHandler extends BotHandler {
     public initCommands(): void {
         this.bot.hears(
             COMMANDS.adminEventsList,
+            isAdmin,
             this.getListOfEvents.bind(this)
         )
-        this.bot.hears(COMMANDS.create, this.createEvent.bind(this))
-        this.bot.hears(COMMANDS.update, this.getEventsToUpdate.bind(this))
-        this.bot.hears(COMMANDS.delete, this.getEventsToDelete.bind(this))
+        this.bot.hears(COMMANDS.create, isAdmin, this.createEvent.bind(this))
+        this.bot.hears(
+            COMMANDS.update,
+            isAdmin,
+            this.getEventsToUpdate.bind(this)
+        )
+        this.bot.hears(
+            COMMANDS.delete,
+            isAdmin,
+            this.getEventsToDelete.bind(this)
+        )
         this.bot.hears(
             COMMANDS.subscribers,
+            isAdmin,
             this.getEventsToGetSubscribers.bind(this)
         )
         this.bot.action(
             // @ts-ignore
             (cbData) => cbData.startsWith('show'),
+            isAdmin,
             this.getSubscribers.bind(this)
         )
         this.bot.action(
             // @ts-ignore
             (cbData) => cbData.startsWith('update'),
+            isAdmin,
             this.updateEvent.bind(this)
         )
         this.bot.action(
             // @ts-ignore
             (cbData) => cbData.startsWith('delete'),
+            isAdmin,
             this.deleteEvent.bind(this)
         )
-        this.bot.action(CALLBACKS.nextAdmin, this.getNextEventsPage.bind(this))
+        this.bot.action(
+            CALLBACKS.nextAdmin,
+            isAdmin,
+            this.getNextEventsPage.bind(this)
+        )
         this.bot.action(
             CALLBACKS.prevAdmin,
+            isAdmin,
             this.getPreviousEventsPage.bind(this)
         )
     }
@@ -194,7 +213,7 @@ export class AdminHandler extends BotHandler {
 
     private formatToMessage(events: Event[], currentPage: number): string {
         if (!events.length) {
-            return '🚫 Ничего не найдено'
+            return '🚫 Вы еще ничего не создали'
         }
         const message = events
             .map(

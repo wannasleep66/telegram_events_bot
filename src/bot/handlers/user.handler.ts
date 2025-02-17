@@ -10,6 +10,7 @@ import {
     registrationInlineButton,
 } from '../keyboards/user_keyboard'
 import { COMMANDS } from '../constants'
+import { isAdmin } from '../middlewares/isAdminGuard'
 
 export class UserHandler extends BotHandler {
     private readonly userService: UserService
@@ -58,7 +59,9 @@ export class UserHandler extends BotHandler {
             return
         }
 
-        const keyboard = ctx.session.isAdmin ? createAdminMenu : createDevMenu
+        const keyboard = ctx.session.isAdmin
+            ? createAdminMenu
+            : createUserMenu(ctx)
 
         await ctx.reply('И снова здравствуй!', {
             reply_markup: keyboard.reply_markup,
@@ -66,7 +69,9 @@ export class UserHandler extends BotHandler {
     }
 
     private async backToMenu(ctx: IBotContext): Promise<void> {
-        const keyboard = ctx.session.isAdmin ? createAdminMenu : createDevMenu
+        const keyboard = ctx.session.isAdmin
+            ? createAdminMenu
+            : createUserMenu(ctx)
         await ctx.reply(COMMANDS.return, {
             reply_markup: keyboard.reply_markup,
         })
@@ -103,6 +108,11 @@ export class UserHandler extends BotHandler {
         deepLinkParams: string,
         ctx: IBotContext
     ): Promise<void> {
+        if (!ctx.session.isAdmin) {
+            await ctx.reply('Вы не можете отметить студента...')
+            return
+        }
+
         const [eventId, userId] = deepLinkParams.split('-')
         try {
             const [user, event] = await Promise.all([

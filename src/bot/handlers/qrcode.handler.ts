@@ -30,6 +30,11 @@ export class QrCodeHandler extends BotHandler {
             (subscription) => subscription.event
         )
 
+        if (!userEvents.length) {
+            await ctx.reply('Вы еще не записаны ни на одно мероприятие')
+            return
+        }
+
         await ctx.reply('Нажмите на мероприятие на котором хотите отметиться', {
             reply_markup: createInlineEventsListWithoutBack(
                 userEvents,

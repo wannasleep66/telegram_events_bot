@@ -8,12 +8,12 @@ export const createUserMenu = (ctx: IBotContext) => {
         [{ text: COMMANDS.QR, callback_data: CALLBACKS.QR }],
         [
             { text: COMMANDS.list, callback_data: CALLBACKS.list },
-            {
-                text: 'Профиль',
-                // web_app: {
-                //     url: `${process.env.HOST}/profile/${ctx.session.userId}`,
-                // },
-            },
+            // {
+            //     text: 'Профиль',
+            //     // web_app: {
+            //     //     url: `${process.env.HOST}/profile/${ctx.session.userId}`,
+            //     // },
+            // },
         ],
     ]).resize()
 }
