@@ -16,7 +16,7 @@ export class BotNotificationsController {
     }
 
     public init() {
-        cron.schedule('* * * * *', async () => {
+        cron.schedule('0 9,14,18 * * *', async () => {
             await this.notify()
         })
     }
@@ -37,7 +37,7 @@ export class BotNotificationsController {
                     `Не забудьте посетить ${subscription.event.title} в ${format(subscription.event.date, 'dd.MM.yyyy HH:mm')} 😊`
                 )
                 await new Promise((resolve) => {
-                    setTimeout(resolve, 500)
+                    setTimeout(resolve, 1000)
                 })
             }
         } catch (error: unknown) {
