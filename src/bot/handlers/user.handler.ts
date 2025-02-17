@@ -27,7 +27,7 @@ export class UserHandler extends BotHandler {
     public initCommands(): void {
         this.bot.start(this.start.bind(this))
         this.bot.hears(
-            'Вы были успешно зарегистрированы',
+            'Вы были успешно зарегистрированы 👏',
             this.authorizeUser.bind(this)
         )
         this.bot.hears(COMMANDS.cancel, this.backToMenu.bind(this))
@@ -63,7 +63,7 @@ export class UserHandler extends BotHandler {
             ? createAdminMenu
             : createUserMenu(ctx)
 
-        await ctx.reply('И снова здравствуй!', {
+        await ctx.reply('И снова здравствуй! 👋', {
             reply_markup: keyboard.reply_markup,
         })
     }
@@ -99,7 +99,7 @@ export class UserHandler extends BotHandler {
             ? createAdminMenu
             : createUserMenu(ctx)
 
-        await ctx.reply('Добро пожаловать!', {
+        await ctx.reply('Добро пожаловать! 👏', {
             reply_markup: keyboard.reply_markup,
         })
     }

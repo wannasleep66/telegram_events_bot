@@ -139,8 +139,8 @@ export class SubscriptionHandler extends BotHandler {
                               `⏰ *Время:* ${format(event.date, 'dd.MM.yyyy HH:mm')}\n\n`
                       )
                       .join('')
-                : 'Вы еще ни на что не записаны'
-        await ctx.editMessageText(`Вы записаны\n\n` + message, {
+                : 'Тут пусто...'
+        await ctx.editMessageText(`Вы записаны:\n\n` + message, {
             reply_markup: Markup.inlineKeyboard(buttonBack).reply_markup,
         })
     }

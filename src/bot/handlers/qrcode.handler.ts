@@ -31,7 +31,7 @@ export class QrCodeHandler extends BotHandler {
         )
 
         if (!userEvents.length) {
-            await ctx.reply('Вы еще не записаны ни на одно мероприятие')
+            await ctx.reply('Вы еще не записаны ни на одно мероприятие...')
             return
         }
 
