@@ -106,6 +106,11 @@ export class AdminHandler extends BotHandler {
 
     private async getEventsToGetSubscribers(ctx: IBotContext): Promise<void> {
         const [events, count] = await this.eventService.getAll()
+        if (!count) {
+            await ctx.reply('Вы еще не создали ни одного мероприятия')
+            return
+        }
+
         await ctx.reply(
             'Нажмите на мероприятие, чтобы получить список записанных студентов',
             {
