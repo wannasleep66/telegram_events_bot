@@ -23,9 +23,13 @@ export class Subscription {
     @Column()
     public eventId: number
 
-    @ManyToOne(() => User, (user) => user.subscriptions)
+    @ManyToOne(() => User, (user) => user.subscriptions, {
+        onDelete: 'CASCADE',
+    })
     public user: User
 
-    @ManyToOne(() => Event, (event) => event.subscriptions)
+    @ManyToOne(() => Event, (event) => event.subscriptions, {
+        onDelete: 'CASCADE',
+    })
     public event: Event
 }
