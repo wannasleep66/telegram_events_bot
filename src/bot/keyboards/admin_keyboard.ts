@@ -51,7 +51,8 @@ export const createAdminEventsInlineMenu = (ctx: IBotContext) => {
             Markup.button.callback(
                 COMMANDS.next,
                 CALLBACKS.nextAdmin,
-                ctx.session.countOfPages - 1 === ctx.session.currentPage
+                ctx.session.countOfPages - 1 === ctx.session.currentPage ||
+                    ctx.session.countOfPages == 0
             ),
         ],
     ])
@@ -79,7 +80,8 @@ export const createInlineUsersList = (
             Markup.button.callback(
                 COMMANDS.next,
                 CALLBACKS.nextUser,
-                ctx.session.countOfPages - 1 === ctx.session.currentPage
+                ctx.session.countOfPages - 1 === ctx.session.currentPage ||
+                    ctx.session.countOfPages == 0
             ),
         ],
     ])
