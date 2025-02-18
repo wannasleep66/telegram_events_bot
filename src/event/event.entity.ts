@@ -15,6 +15,8 @@ export class Event {
     @Column('timestamp')
     public date: Date
 
-    @OneToMany(() => Subscription, (subscription) => subscription.event)
+    @OneToMany(() => Subscription, (subscription) => subscription.event, {
+        onDelete: 'CASCADE',
+    })
     public subscriptions: Subscription[]
 }
