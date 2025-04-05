@@ -11,6 +11,7 @@ export interface SceneSession extends Scenes.WizardSessionData {
 export interface Session extends Scenes.SceneSession<SceneSession> {
     userId: string
     eventToUpdateId: number
+    eventToSendVideoId: number
     isAuth: boolean
     isAdmin: boolean
     currentPage: number

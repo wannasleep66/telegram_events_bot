@@ -5,7 +5,10 @@ import { IBotContext } from '../types/context.interface'
 export const createUserMenu = (ctx: IBotContext) => {
     // @ts-ignore
     return Markup.keyboard([
-        [{ text: COMMANDS.QR, callback_data: CALLBACKS.QR }],
+        [
+            { text: COMMANDS.QR, callback_data: CALLBACKS.QR },
+            { text: COMMANDS.Video, callback_data: COMMANDS.Video },
+        ],
         [
             { text: COMMANDS.list, callback_data: CALLBACKS.list },
             // {

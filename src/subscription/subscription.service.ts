@@ -67,8 +67,11 @@ export class SubscriptionService {
         return subscription
     }
 
-    public async update(prevSubscription: Subscription): Promise<Subscription> {
-        prevSubscription.visited = true
+    public async update(
+        prevSubscription: Subscription,
+        visited: boolean = true
+    ): Promise<Subscription> {
+        prevSubscription.visited = visited
 
         await this.subscriptionRepository.save(prevSubscription)
         return prevSubscription

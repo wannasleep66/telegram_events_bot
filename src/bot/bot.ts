@@ -11,6 +11,7 @@ import { SubscriptionHandler } from './handlers/subscription.handler'
 import { AdminHandler } from './handlers/admin.handler'
 import { QrCodeHandler } from './handlers/qrcode.handler'
 import { checkPermission } from './middlewares/checkPermission'
+import { VideoHandler } from './handlers/video.handler'
 
 export class Bot {
     private readonly bot: Telegraf<IBotContext>
@@ -24,6 +25,7 @@ export class Bot {
             new SubscriptionHandler(this.bot),
             new AdminHandler(this.bot),
             new QrCodeHandler(this.bot),
+            new VideoHandler(this.bot),
         ]
     }
 

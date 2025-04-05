@@ -135,8 +135,10 @@ export class UserHandler extends BotHandler {
                 return
             }
 
-            const markedSubscription =
-                await this.subscriptionService.update(subscription)
+            const markedSubscription = await this.subscriptionService.update(
+                subscription,
+                true
+            )
             if (!markedSubscription) {
                 await ctx.reply('Не получилось отметить...')
             }

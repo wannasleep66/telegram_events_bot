@@ -8,6 +8,18 @@ services:
       - /data/postgres:/data/postgres
     env_file:
       .env
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
   app:
     build: .
     restart: always
@@ -15,4 +27,9 @@ services:
       - "80:80"
     depends_on:
       - postgres
+    volumes:
+      - ./:/app
+volumes:
+  pgadmin-data:
+
 

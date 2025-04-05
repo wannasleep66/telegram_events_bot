@@ -17,6 +17,7 @@ export const COMMANDS = {
     subscribers: '👥Записи на мероприятия',
     toEventsList: '📅 Все мероприятия',
     QR: '🔳 Создать QR код',
+    Video: '🎥 Отправить кружок',
     makeAdmin: 'Сделать админом 🧐',
 }
 
@@ -39,4 +40,5 @@ export const CALLBACKS = {
     adminEventsList: 'list_of_created',
     makeAdmin: 'make_admin',
     QR: 'qr_events',
+    Video: 'video',
 }

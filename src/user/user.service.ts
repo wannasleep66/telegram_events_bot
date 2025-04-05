@@ -34,6 +34,15 @@ export class UserService {
         return users
     }
 
+    public async getAdmins(): Promise<User[]> {
+        const admins = await this.userRepository
+            .createQueryBuilder('user')
+            .where('user.isAdmin = true')
+            .getMany()
+
+        return admins
+    }
+
     public async getById(userId: string): Promise<User | null> {
         const user = await this.userRepository
             .createQueryBuilder('user')
