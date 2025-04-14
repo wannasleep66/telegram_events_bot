@@ -257,7 +257,9 @@ export class AdminHandler extends BotHandler {
             await ctx.answerCbQuery('Не удалось дать пользователю роль...')
         }
 
-        await ctx.reply('Пользователь теперь админ')
+        await ctx.reply(
+            `Пользователь теперь ${updatedUser.isAdmin ? 'администратор' : 'не администратор'}}`
+        )
     }
 
     private async getListOfEvents(ctx: IBotContext): Promise<void> {

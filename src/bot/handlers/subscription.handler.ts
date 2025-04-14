@@ -9,7 +9,7 @@ import {
     userSubscriptionsNavigationButtons,
 } from '../keyboards/subscription_lists'
 import { buttonBack } from '../keyboards/event_menu'
-import { addDays, format, isAfter, subDays } from 'date-fns'
+import { format, isAfter, subDays } from 'date-fns'
 import { Subscription } from '../../subscription/subscription.entity'
 
 export class SubscriptionHandler extends BotHandler {
