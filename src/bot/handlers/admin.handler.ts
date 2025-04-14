@@ -251,14 +251,14 @@ export class AdminHandler extends BotHandler {
 
         const updatedUser = await this.userService.update(userToUpdate, {
             ...userToUpdate,
-            isAdmin: !userToUpdate.isAdmin,
+            isAdmin: userToUpdate.isAdmin,
         })
         if (!updatedUser) {
             await ctx.answerCbQuery('Не удалось дать пользователю роль...')
         }
 
         await ctx.reply(
-            `Пользователь теперь ${updatedUser.isAdmin ? 'администратор' : 'не администратор'}}`
+            `Пользователь теперь ${updatedUser.isAdmin ? 'администратор' : 'не администратор'}`
         )
     }
 
