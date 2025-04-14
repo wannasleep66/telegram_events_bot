@@ -65,7 +65,7 @@ export const createInlineUsersList = (
 ) => {
     const eventList = users.map((user) => [
         {
-            text: `${user.username} ${user.surname} ${user.group}`,
+            text: `${user.username} ${user.surname} ${user.group} ${user.isAdmin ? 'Админ' : ''}`,
             callback_data: `${cb}_${user.id}`,
         },
     ])

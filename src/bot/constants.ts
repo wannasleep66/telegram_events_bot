@@ -27,6 +27,8 @@ export const CALLBACKS = {
     list: 'show_events',
     nextAdmin: 'admin_next',
     prevAdmin: 'prev_admin',
+    nextSubscription: 'next_subscription',
+    prevSubscription: 'prev_subscription',
     nextUser: 'next_user',
     prevUser: 'prev_user',
     create: 'create_event',

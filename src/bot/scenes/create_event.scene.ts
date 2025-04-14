@@ -30,7 +30,7 @@ export const createEventScene = new Scenes.WizardScene<IBotContext>(
             return next()
         }
         ctx.scene.session.title = message
-        await ctx.reply('Добавьте описание для задачи')
+        await ctx.reply('Добавьте описание для мероприятия')
         ctx.wizard.next()
     },
     async (ctx, next: () => void) => {
@@ -47,7 +47,7 @@ export const createEventScene = new Scenes.WizardScene<IBotContext>(
         }
 
         ctx.scene.session.description = message
-        await ctx.reply('Добавьте дату задачи в формате дд.мм.гггг чч:мм')
+        await ctx.reply('Добавьте дату мероприятия в формате дд.мм.гггг чч:мм')
         ctx.wizard.next()
     },
     async (ctx, next: () => void) => {

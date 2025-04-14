@@ -4,9 +4,13 @@ import { IBotContext } from '../types/context.interface'
 import { SubscriptionService } from '../../subscription/subscription.service'
 import { EventService } from '../../event/event.service'
 import { CALLBACKS } from '../constants'
-import { createInlineEventsListWithBack } from '../keyboards/subscription_lists'
+import {
+    createInlineEventsListWithBack,
+    userSubscriptionsNavigationButtons,
+} from '../keyboards/subscription_lists'
 import { buttonBack } from '../keyboards/event_menu'
-import { format } from 'date-fns'
+import { addDays, format, isAfter, subDays } from 'date-fns'
+import { Subscription } from '../../subscription/subscription.entity'
 
 export class SubscriptionHandler extends BotHandler {
     private readonly subscriptionService: SubscriptionService
@@ -39,18 +43,28 @@ export class SubscriptionHandler extends BotHandler {
         )
         this.bot.action(
             CALLBACKS.toUserEvents,
-            this.getUserSubscriptions.bind(this)
+            this.getListOfUserSubscriptions.bind(this)
+        )
+        this.bot.action(
+            CALLBACKS.nextSubscription,
+            this.getNextUserSubscriptionsPage.bind(this)
+        )
+        this.bot.action(
+            CALLBACKS.prevSubscription,
+            this.getPreviousUserSubscriptionsPage.bind(this)
         )
     }
 
     private async getEventsToSubscribe(ctx: IBotContext): Promise<void> {
         const userId = ctx.session.userId
         const [events, count] = await this.eventService.getAll()
-        const availableEvents = events.filter((event) =>
-            event.subscriptions.every(
-                (subscription) => subscription.user.id !== userId
+        const availableEvents = events.filter((event) => {
+            return (
+                event.subscriptions.every((subscription) => {
+                    return subscription.user.id !== userId
+                }) && isAfter(event.date, subDays(new Date(), 1))
             )
-        )
+        })
         if (!availableEvents.length) {
             await ctx.editMessageText(
                 'Пока что нет доступных мероприятий для вас',
@@ -124,22 +138,86 @@ export class SubscriptionHandler extends BotHandler {
         await this.getEventsToUnsubscribe(ctx)
     }
 
-    private async getUserSubscriptions(ctx: IBotContext): Promise<void> {
-        const userId = ctx.session.userId
-        const subscriptions = await this.subscriptionService.getByUser(userId)
-        const message =
-            subscriptions?.length > 0
-                ? subscriptions
-                      .map(
-                          (subscription, index) =>
-                              `🔹 ${index + 1}: ${subscription.event.title}\n\n` +
-                              `⏰ Время: ${format(subscription.event.date, 'dd.MM.yyyy HH:mm')}\n\n` +
-                              `${subscription.visited ? 'Посетил' : 'Не посетил'}`
-                      )
-                      .join('\n\n')
-                : 'Тут пусто...'
+    private async getListOfUserSubscriptions(ctx: IBotContext): Promise<void> {
+        ctx.session.currentPage = 0
+        const subscriptions = await this.getUserSubscriptions(ctx)
+        const message = this.formatToMessage(
+            subscriptions,
+            ctx.session.currentPage
+        )
         await ctx.editMessageText(`Вы записаны:\n\n` + message, {
-            reply_markup: Markup.inlineKeyboard(buttonBack).reply_markup,
+            reply_markup: userSubscriptionsNavigationButtons(ctx).reply_markup,
         })
+    }
+
+    private async getNextUserSubscriptionsPage(
+        ctx: IBotContext
+    ): Promise<void> {
+        const hasNextPage =
+            ctx.session.currentPage + 1 < ctx.session.countOfPages
+        if (!hasNextPage) {
+            return
+        }
+
+        ctx.session.currentPage += 1
+        await this.refreshListOfUserSubscriptions(ctx)
+    }
+
+    private async getPreviousUserSubscriptionsPage(
+        ctx: IBotContext
+    ): Promise<void> {
+        const hasPreviousPage = ctx.session.currentPage > 0
+        if (!hasPreviousPage) {
+            return
+        }
+
+        ctx.session.currentPage -= 1
+        await this.refreshListOfUserSubscriptions(ctx)
+    }
+
+    private async refreshListOfUserSubscriptions(
+        ctx: IBotContext
+    ): Promise<void> {
+        const refreshedSubscriptions = await this.getUserSubscriptions(ctx)
+        const refreshedMessage = this.formatToMessage(
+            refreshedSubscriptions,
+            ctx.session.currentPage
+        )
+        await ctx.editMessageText(refreshedMessage, {
+            reply_markup: userSubscriptionsNavigationButtons(ctx).reply_markup,
+            parse_mode: 'HTML',
+        })
+    }
+
+    private async getUserSubscriptions(
+        ctx: IBotContext
+    ): Promise<Subscription[]> {
+        const userId = ctx.session.userId
+        const [subscriptions, count] =
+            await this.subscriptionService.getByUserPaginated(
+                userId,
+                ctx.session.currentPage * 10,
+                10
+            )
+        ctx.session.countOfPages = Math.ceil(count / 10)
+        return subscriptions
+    }
+
+    private formatToMessage(
+        subscriptions: Subscription[],
+        currentPage: number
+    ): string {
+        if (!subscriptions.length) {
+            return 'Тут пусто...'
+        }
+
+        return subscriptions
+            .map(
+                (subscription, index) =>
+                    `🔹 ${index + 1 + currentPage * 10}: ${subscription.event.title}\n\n` +
+                    `⏰ Время: ${format(subscription.event.date, 'dd.MM.yyyy HH:mm')}\n\n` +
+                    `${subscription.visited ? 'Посетил' : 'Не посетил'}`
+            )
+            .join('\n\n')
     }
 }

@@ -130,10 +130,16 @@ export class AdminHandler extends BotHandler {
 
     private async getEventsToDelete(ctx: IBotContext): Promise<void> {
         const [events, count] = await this.eventService.getAll()
-        await ctx.reply('Нажмите на мероприятие, которое хотите удалить', {
-            reply_markup: createInlineEventsListWithoutBack(events, 'delete')
-                .reply_markup,
-        })
+        await ctx.reply(
+            'Нажмите на мероприятие, которое хотите удалить.\n\n <b>Учтите, что все записи на это мероприятие будут так же удалены</b>',
+            {
+                parse_mode: 'HTML',
+                reply_markup: createInlineEventsListWithoutBack(
+                    events,
+                    'delete'
+                ).reply_markup,
+            }
+        )
     }
 
     private async getUsersToMakeAdmin(ctx: IBotContext): Promise<void> {
@@ -155,18 +161,42 @@ export class AdminHandler extends BotHandler {
             await ctx.answerCbQuery('Что то пошло не так...')
             return
         }
-        const subscriptions = await this.subscriptionService.getByEvent(eventId)
-        const message =
-            subscriptions?.length > 0
-                ? subscriptions
-                      .map(
-                          (subscription, index) =>
-                              `${index + 1}: ${subscription.user.telegram} ${subscription.user.surname} ${subscription.user.group} ${subscription.visited ? 'посетил' : 'не посетил'} \n\n`
-                      )
-                      .join('')
-                : 'Никто не записан на данное мероприятие'
 
-        await ctx.reply(message)
+        const subscriptions = await this.subscriptionService.getByEvent(eventId)
+        if (!subscriptions || !subscriptions.length) {
+            await ctx.reply('Никто не записан на данное мероприятие')
+            return
+        }
+
+        const MAX_MESSAGE_LENGTH = 4000
+        const subscribersDetails = subscriptions.map(
+            (subscription, index) =>
+                `${index + 1}: ${subscription.user.telegram} ${subscription.user.surname} ${subscription.user.group} ${subscription.visited ? 'посетил' : 'не посетил'} \n\n`
+        )
+        const messages = []
+        let currentMessage = ''
+
+        for (const subscriberDetail of subscribersDetails) {
+            if (
+                currentMessage.length + subscriberDetail.length >
+                MAX_MESSAGE_LENGTH
+            ) {
+                messages.push(currentMessage)
+                currentMessage = subscriberDetail
+            }
+
+            currentMessage += subscriberDetail
+        }
+
+        if (currentMessage.length > 0) {
+            messages.push(currentMessage)
+        }
+
+        for (const message of messages) {
+            await ctx.reply(message)
+        }
+
+        await ctx.answerCbQuery()
     }
 
     private async updateEvent(ctx: IBotContext): Promise<void> {
@@ -182,6 +212,7 @@ export class AdminHandler extends BotHandler {
 
     private async deleteEvent(ctx: IBotContext): Promise<void> {
         // @ts-ignore
+
         const eventId = ctx.update.callback_query.data.split('_')[1]
         if (!eventId) {
             await ctx.answerCbQuery('Что то пошло не так...')
@@ -220,7 +251,7 @@ export class AdminHandler extends BotHandler {
 
         const updatedUser = await this.userService.update(userToUpdate, {
             ...userToUpdate,
-            isAdmin: true,
+            isAdmin: !userToUpdate.isAdmin,
         })
         if (!updatedUser) {
             await ctx.answerCbQuery('Не удалось дать пользователю роль...')

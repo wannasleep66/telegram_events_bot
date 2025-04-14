@@ -56,6 +56,23 @@ export class SubscriptionService {
         return subscription
     }
 
+    public async getByUserPaginated(
+        userId: string,
+        skip: number,
+        limit: number
+    ): Promise<[subscriptions: Subscription[], count: number]> {
+        const subscriptions = this.subscriptionRepository
+            .createQueryBuilder('subscription')
+            .leftJoinAndSelect('subscription.user', 'user')
+            .leftJoinAndSelect('subscription.event', 'event')
+            .where('user.id = :id', { id: userId })
+            .take(limit)
+            .skip(skip)
+            .getManyAndCount()
+
+        return subscriptions
+    }
+
     public async getByEvent(eventId: number): Promise<Subscription[]> {
         const subscription = await this.subscriptionRepository
             .createQueryBuilder('subscription')

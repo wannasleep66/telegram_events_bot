@@ -25,7 +25,7 @@ export class EventService {
             .createQueryBuilder('event')
             .leftJoinAndSelect('event.subscriptions', 'subscription')
             .leftJoinAndSelect('subscription.user', 'user')
-            .orderBy('event.date')
+            .orderBy('event.date', 'DESC')
 
         limit && query.take(limit)
         skip && query.skip(skip)
