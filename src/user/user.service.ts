@@ -59,7 +59,7 @@ export class UserService {
         prevUser.username = updateData.username || prevUser.username
         prevUser.surname = updateData.surname || prevUser.surname
         prevUser.group = updateData.group || prevUser.group
-        prevUser.isAdmin = updateData.isAdmin || prevUser.isAdmin
+        prevUser.isAdmin = !updateData.isAdmin || !prevUser.isAdmin
 
         const updatedUser = await this.userRepository.save(prevUser)
         return updatedUser
